@@ -2,6 +2,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.util.Scanner;
 
+// credit: https://github.com/CodeNMore/New-Beginner-Java-Game-Programming-Src
 public class Game implements Runnable {
 
     private Display display;

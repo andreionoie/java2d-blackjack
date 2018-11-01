@@ -2,6 +2,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
+// credit: https://github.com/CodeNMore/New-Beginner-Java-Game-Programming-Src
+
 public class ImgLoader {
 
     public static BufferedImage loadImage(String path) {

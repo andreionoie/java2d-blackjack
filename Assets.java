@@ -3,6 +3,8 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
+// credit: https://github.com/CodeNMore/New-Beginner-Java-Game-Programming-Src
+
 public class Assets {
     private static final int width = 64, height = 96;
     private static Map<Card, BufferedImage> cardImgs;
@@ -54,6 +56,8 @@ public class Assets {
 
         return cardImage;
     }
+
+    // credits: https://codereview.stackexchange.com/a/58177
 
     private static void addImg(BufferedImage buff1, BufferedImage buff2, float opaque) {
         Graphics2D g2d = buff1.createGraphics();

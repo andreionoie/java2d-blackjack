@@ -2,6 +2,8 @@ import java.awt.*;
 
 import javax.swing.JFrame;
 
+// credit: https://github.com/CodeNMore/New-Beginner-Java-Game-Programming-Src
+
 public class Display {
 
     private JFrame frame;
