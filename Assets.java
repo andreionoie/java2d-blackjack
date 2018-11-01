@@ -52,19 +52,11 @@ public class Assets {
         }
 
         if (cardGUI.isSelected())
-            addImg(cardImage,cardSelected, 1f);
+            ImgUtilities.addImg(cardImage,cardSelected, 1f);
 
         return cardImage;
     }
 
-    // credits: https://codereview.stackexchange.com/a/58177
-
-    private static void addImg(BufferedImage buff1, BufferedImage buff2, float opaque) {
-        Graphics2D g2d = buff1.createGraphics();
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opaque));
-        g2d.drawImage(buff2, 0, 0, null);
-        g2d.dispose();
-    }
 
 
 }

@@ -6,7 +6,7 @@ public class Spritesheet {
     private int h;
 
     public Spritesheet(String path, int w, int h) {
-        sheet = ImgLoader.loadImage(path);
+        sheet = ImgUtilities.loadImage(path);
         this.w = w;
         this.h = h;
     }
