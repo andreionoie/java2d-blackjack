@@ -35,7 +35,7 @@ public class PackUtilities {
         return hasAce && hasTenCard;
     }
 
-    public static GameState comparePacks(PackOfCards defendant, PackOfCards opponent) {
+    public static GameOutcome comparePacks(PackOfCards defendant, PackOfCards opponent) {
         boolean defBlackjack, opBlackjack;
         int defValue, opValue;
 
@@ -46,32 +46,32 @@ public class PackUtilities {
 
         // check for valid packs
         if (opValue > 21 && defValue > 21)
-            return GameState.DRAW;
+            return GameOutcome.DRAW;
 
         if (opValue > 21)
-            return GameState.VICTORY;
+            return GameOutcome.VICTORY;
 
         if (defValue > 21)
-            return GameState.DEFEAT;
+            return GameOutcome.DEFEAT;
 
         // check for blackjack (ace + 10-value card)
         if (defBlackjack || opBlackjack)
             if (defBlackjack && opBlackjack) {
-                return GameState.DRAW;
+                return GameOutcome.DRAW;
             } else if (defBlackjack){
-                return GameState.VICTORY;
+                return GameOutcome.VICTORY;
             } else {
-                return GameState.DEFEAT;
+                return GameOutcome.DEFEAT;
             }
 
         // check when there is no special case
         if (defValue == opValue)
-            return GameState.DRAW;
+            return GameOutcome.DRAW;
 
         if (defValue > opValue)
-            return GameState.VICTORY;
+            return GameOutcome.VICTORY;
 
-        return GameState.DEFEAT;
+        return GameOutcome.DEFEAT;
     }
 
     public static void printPack(PackOfCards p) {
@@ -88,5 +88,10 @@ public class PackUtilities {
         }
 
         dest.shuffle();
+    }
+
+    public static void revealPack(PackOfCards p) {
+        for (CardGUI c : p.getCards())
+            c.show();
     }
 }

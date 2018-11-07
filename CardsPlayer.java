@@ -1,7 +1,7 @@
 public class CardsPlayer {
     private PackOfCards hand;
     private boolean theirTurn;
-    private GameState gameState;
+    private GameOutcome gameOutcome;
     private int nbOfWins;
     private final String name;
 
@@ -9,8 +9,9 @@ public class CardsPlayer {
         this.name = name;
         hand = new PackOfCards();
         this.theirTurn = theirTurn;
-        gameState = GameState.UNFINISHED;
+        gameOutcome = GameOutcome.UNFINISHED;
         nbOfWins = 0;
+
     }
 
     public void drawFromDeck(PackOfCards deck, int count) {
@@ -34,23 +35,23 @@ public class CardsPlayer {
     }
 
     public void win() {
-        gameState = GameState.VICTORY;
+        gameOutcome = GameOutcome.VICTORY;
         System.out.println(name + " has won the round.");
         nbOfWins++;
     }
 
     public void lose() {
-        gameState = GameState.DEFEAT;
+        gameOutcome = GameOutcome.DEFEAT;
         System.out.println(name + " has lost the round.");
     }
 
     public void draw() {
-        gameState = GameState.DRAW;
+        gameOutcome = GameOutcome.DRAW;
         System.out.println("Round has ended in a draw.");
     }
 
     public void reset() {
-        gameState = GameState.UNFINISHED;
+        gameOutcome = GameOutcome.UNFINISHED;
     }
 
     public PackOfCards getHand() {
@@ -61,8 +62,8 @@ public class CardsPlayer {
         return theirTurn;
     }
 
-    public GameState getGameState() {
-        return gameState;
+    public GameOutcome getGameOutcome() {
+        return gameOutcome;
     }
 
     public int getNbOfWins() {
@@ -78,4 +79,5 @@ public class CardsPlayer {
         PackUtilities.printPack(hand);
         System.out.println("Value is " + PackUtilities.getPackValue(hand));
     }
+
 }

@@ -57,6 +57,19 @@ public class Assets {
         return cardImage;
     }
 
+    public static void drawPack(int x, int y, PackOfCards deck, Graphics g) {
+        int tmpX = 0, tmpY = 0;
 
+        for (CardGUI c : deck.getCards()) {
+            g.drawImage(Assets.getCardImg(c),
+                    x + (width+10) *tmpX, y + (height+10) * tmpY, null);
+            tmpX++;
+
+            if (tmpX > 12) {
+                tmpX = 0;
+                tmpY++;
+            }
+        }
+    }
 
 }

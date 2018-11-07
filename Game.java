@@ -14,9 +14,10 @@ public class Game implements Runnable {
 
     private BufferStrategy bs;
     private Graphics g;
-    private PackOfCards deck;
+    private PackOfCards deck, playerHand, dealerHand;
     private Scanner reader;
     private int nbOfCards;
+    private CardsGame cardsGame;
 
     public Game(String title, int width, int height){
         this.width = width;
@@ -27,35 +28,37 @@ public class Game implements Runnable {
     private void init(){
         display = new Display(title, width, height);
         Assets.load("/res/img/pixeldeck3_double.png");
-        deck = new PackOfCards();
-        deck.initStandardPack();
-        deck.shuffle();
-        deck.getTop().toggleSelect();
+//        deck = new PackOfCards();
+//        deck.initStandardPack();
+//        deck.shuffle();
+//        deck.getTop().toggleSelect();
         reader = new Scanner(System.in);
+        cardsGame = new CardsGame(1, reader);
+
         nbOfCards = 0;
     }
 
     private void tick() {
-        String s = reader.nextLine();
+        cardsGame.tickGameLoop();
 
-        switch (s) {
-            case "":
-                deck.shuffle();
-                break;
-            case "e":
-                deck.extract();
-                break;
-            case "t":
-                deck.getTop().toggleShow();
-                break;
-            case "s":
-                deck.getTop().toggleSelect();
-                break;
-        }
-//        if (s.equals("l"))
-//            deck.extract();
-//        else
-//            deck.insertRandomCard();
+        playerHand = cardsGame.getPlayerDeck();
+        dealerHand = cardsGame.getDealerDeck();
+
+//        switch (s) {
+//            case "":
+//                deck.shuffle();
+//                break;
+//            case "e":
+//                deck.extract();
+//                break;
+//            case "t":
+//                deck.getTop().toggleShow();
+//                break;
+//            case "s":
+//                deck.getTop().toggleSelect();
+//                break;
+//        }
+
     }
 
     private void render(){
@@ -65,24 +68,14 @@ public class Game implements Runnable {
             return;
         }
         g = bs.getDrawGraphics();
+
         //Clear Screen
         g.clearRect(0, 0, width, height);
+
         //Draw Here!
 
-        int tmpX = 0, tmpY = 0;
-
-        for (CardGUI c : deck.getCards()) {
-            g.drawImage(Assets.getCardImg(c),
-                    20 + 45 *tmpX, 20 + 60 * tmpY, null);
-            tmpX++;
-//            if (tmpX + tmpY*13 >= nbOfCards)
-//                break;
-
-            if (tmpX > 12) {
-                tmpX = 0;
-                tmpY++;
-            }
-        }
+        Assets.drawPack(20, 20, dealerHand, g);
+        Assets.drawPack(20, height - 120, playerHand, g);
 
         //End Drawing!
         bs.show();
@@ -94,6 +87,7 @@ public class Game implements Runnable {
         init();
 
         while(running){
+            render();
             tick();
             render();
         }
@@ -103,7 +97,7 @@ public class Game implements Runnable {
     }
 
     public synchronized void start(){
-        if(running)
+        if (running)
             return;
         running = true;
         thread = new Thread(this);
