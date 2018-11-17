@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class CardsGame {
-    public enum GameState {ERROR, DEAL_CARDS, DEAL_PLAYER, DEAL_DEALER, REVEAL_CARDS, EVALUATE, REBUILD_DECK}
+    public enum GameState {ERROR, INIT, PLACE_BETS, DEAL_CARDS, DEAL_PLAYER, DEAL_DEALER, REVEAL_CARDS, EVALUATE, REBUILD_DECK}
 
     private CardsPlayer dealer;
     private CardsPlayer player;
@@ -13,16 +13,22 @@ public class CardsGame {
     public CardsGame(int nbOfDecks, Scanner reader) {
         this.reader = reader;
         dealer = new CardsPlayer(false, "Dealer");
-        player = new CardsPlayer(true, "Player1");
+        player = new CardsPlayer(true, "Player1", 3000);
         deck = new PackOfCards();
         deck.initStandardPack();
         deck.shuffle();
         gameCount = 0;
-        gameState = GameState.DEAL_CARDS;
+        gameState = GameState.INIT;
     }
 
     private void nextState() {
         switch (gameState) {
+            case INIT:
+                gameState = GameState.PLACE_BETS;
+                break;
+            case PLACE_BETS:
+                gameState = GameState.DEAL_CARDS;
+                break;
             case DEAL_CARDS:
                 if (player.isTheirTurn())
                     gameState = GameState.DEAL_PLAYER;
@@ -50,7 +56,7 @@ public class CardsGame {
 
                 break;
             case REBUILD_DECK:
-                gameState = GameState.DEAL_CARDS;
+                gameState = GameState.INIT;
                 break;
             default:
                 gameState = GameState.ERROR;
@@ -71,10 +77,18 @@ public class CardsGame {
 
     public void tickGameLoop() {
         switch (gameState) {
-            case DEAL_CARDS:
+            case INIT:
                 player.reset();
                 dealer.reset();
                 System.out.println("\nPlaying game no. " + gameCount + "\n");
+                System.out.println("Player balance: " + player.getCredit());
+                break;
+            case PLACE_BETS:
+                System.out.print("Enter bet amount: ");
+                int amount = Integer.parseInt(reader.nextLine());
+                player.bet(amount);
+                break;
+            case DEAL_CARDS:
                 dealCards();
                 player.setTheirTurn(true);
                 dealer.setTheirTurn(false);
@@ -105,12 +119,14 @@ public class CardsGame {
             case DEAL_DEALER:
                 int dealerVal = PackUtilities.getPackValue(dealer.getHand());
                 dealer.printHand();
-                player.printHand();
+                //player.printHand();
 
-                if (dealerVal >= 21) {
+                if (dealerVal > 21) {
                     dealer.setTheirTurn(false);
+                } else if (dealerVal >= 17) {
+                    stand(dealer);
                 } else {
-                    readMove(dealer);
+                    hit(dealer);
                 }
 
                 break;

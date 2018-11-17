@@ -4,14 +4,21 @@ public class CardsPlayer {
     private GameOutcome gameOutcome;
     private int nbOfWins;
     private final String name;
+    private Credit credit;
+    private Credit betted;
+
+    public CardsPlayer(boolean theirTurn, String name, double money) {
+        this.name = name;
+        this.hand = new PackOfCards();
+        this.theirTurn = theirTurn;
+        this.gameOutcome = GameOutcome.UNFINISHED;
+        this.nbOfWins = 0;
+        this.credit = new Credit(money);
+        this.betted = new Credit();
+    }
 
     public CardsPlayer(boolean theirTurn, String name) {
-        this.name = name;
-        hand = new PackOfCards();
-        this.theirTurn = theirTurn;
-        gameOutcome = GameOutcome.UNFINISHED;
-        nbOfWins = 0;
-
+        this(theirTurn, name, 0);
     }
 
     public void drawFromDeck(PackOfCards deck, int count) {
@@ -36,13 +43,15 @@ public class CardsPlayer {
 
     public void win() {
         gameOutcome = GameOutcome.VICTORY;
-        System.out.println(name + " has won the round.");
+        System.out.println(name + " has won the round, and " + betted.get() + " credit.");
+        credit.deposit(betted.empty());
         nbOfWins++;
     }
 
     public void lose() {
         gameOutcome = GameOutcome.DEFEAT;
-        System.out.println(name + " has lost the round.");
+        System.out.println(name + " has lost the round, and " + betted.get() + " credit.");
+        credit.withdraw(betted.empty());
     }
 
     public void draw() {
@@ -51,7 +60,12 @@ public class CardsPlayer {
     }
 
     public void reset() {
+        betted.empty();
         gameOutcome = GameOutcome.UNFINISHED;
+    }
+
+    public void bet(double amount) {
+        betted.deposit(amount);
     }
 
     public PackOfCards getHand() {
@@ -73,6 +87,11 @@ public class CardsPlayer {
     public String getName() {
         return name;
     }
+
+    public Credit getCredit() {
+        return credit;
+    }
+
 
     public void printHand() {
         System.out.print(name + "s hand: ");

@@ -1,10 +1,10 @@
 public class Credit implements Comparable<Credit> {
-    private double amount;
+    private double balance;
 
     public Credit(double amount) {
         if (amount < 0)
             throw new IllegalArgumentException("Can't have negative value credit.");
-        this.amount = amount;
+        this.balance = amount;
     }
 
     public Credit() {
@@ -12,31 +12,46 @@ public class Credit implements Comparable<Credit> {
     }
 
     public void withdraw(double howMuch) {
-        if (howMuch > amount)
+        if (howMuch > balance)
             throw new IllegalArgumentException("Can't extract more than account has.");
 
-        amount -= howMuch;
+        balance -= howMuch;
     }
 
     public void deposit(double howMuch) {
-        amount += howMuch;
+        balance += howMuch;
+    }
+
+    public void withdraw(Credit howMuch) {
+        withdraw(howMuch.get());
+    }
+
+    public void deposit(Credit howMuch) {
+        deposit(howMuch.get());
     }
 
     public double get() {
-        return amount;
+        return balance;
     }
 
     public double empty() {
-        double tmp = amount;
-        amount = 0;
+        double tmp = balance;
+        balance = 0;
         return tmp;
     }
 
     @Override
+    public String toString() {
+        return "Credit{" +
+                "balance=" + balance +
+                '}';
+    }
+
+    @Override
     public int compareTo(Credit o) {
-        if (this.amount > o.get())
+        if (this.balance > o.get())
             return 1;
-        else if (this.amount < o.get())
+        else if (this.balance < o.get())
             return -1;
 
         return 0;
