@@ -68,6 +68,14 @@ public class CardsPlayer {
         betted.deposit(amount);
     }
 
+    public void doubleDown() {
+        betted.deposit(betted.get());
+    }
+
+    public void blackjackPay() {
+        betted.deposit(betted.get()/2);
+    }
+
     public PackOfCards getHand() {
         return hand;
     }

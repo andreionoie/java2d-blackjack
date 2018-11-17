@@ -98,9 +98,9 @@ public class CardsGame {
                 int playerVal = PackUtilities.getPackValue(player.getHand());
                 dealer.printHand();
                 player.printHand();
-
                 // optional check for blackjack (can only check for 21)
                 if (PackUtilities.packContainsBlackjack(player.getHand())) {
+                    player.blackjackPay();  // blackjack pays 3:2
                     stand(player);
                     System.out.println(player.getName() + " has blackjack hand!");
 
@@ -135,6 +135,7 @@ public class CardsGame {
                 break;
             case REVEAL_CARDS:
                 PackUtilities.revealPack(dealer.getHand());
+                PackUtilities.revealPack(player.getHand());
                 break;
             case REBUILD_DECK:
                 PackUtilities.mergePacksShuffle(deck, player.getHand(), dealer.getHand());
@@ -155,10 +156,13 @@ public class CardsGame {
     private void readMove(CardsPlayer player) {
         String cmd = reader.nextLine();
 
-        if (cmd.equals("n"))
+        if (cmd.equals("n")) {
             stand(player);
-        else
+        } else if (cmd.equals("d")) {
+            dblDown(player);
+        } else {
             hit(player);
+        }
     }
 
     private void evaluateGame() {
@@ -186,6 +190,13 @@ public class CardsGame {
         dealer.getHand().getTop().conceal();
         player.drawFromDeck(deck);
         dealer.drawFromDeck(deck); // non concealed
+    }
+
+    private void dblDown(CardsPlayer player) {
+        player.doubleDown();
+        hit(player);
+        player.getHand().getTop().conceal();
+        stand(player);
     }
 
     private void hit(CardsPlayer player) {
