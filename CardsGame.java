@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class CardsGame {
     public enum GameState {
         ERROR, INIT, PLACE_BETS, DEAL_CARDS,
-        ASK_INSURANCE, DEAL_PLAYER, DEAL_DEALER,
+        ASK_INSURANCE, DEAL_PLAYER, FORFEIT, DEAL_DEALER,
         REVEAL_CARDS, EVALUATE, REBUILD_DECK
     }
 
@@ -48,11 +48,18 @@ public class CardsGame {
                 }
                 break;
             case DEAL_PLAYER:
-                if (player.getGameOutcome() != GameOutcome.UNFINISHED)  // player hit 21
-                    gameState = GameState.REVEAL_CARDS;
+                if (player.hasForfeited())
+                    gameState = GameState.FORFEIT;
+                else {
+                    if (player.getGameOutcome() != GameOutcome.UNFINISHED)  // player hit 21
+                        gameState = GameState.REVEAL_CARDS;
 
-                if (dealer.isTheirTurn())                               // player stood or busted
-                    gameState = GameState.DEAL_DEALER;
+                    if (dealer.isTheirTurn())                               // player stood, busted
+                        gameState = GameState.DEAL_DEALER;
+                }
+                break;
+            case FORFEIT:
+                gameState = GameState.REVEAL_CARDS;
                 break;
             case DEAL_DEALER:
                 if (! dealer.isTheirTurn())                            // dealer stood or busted
@@ -138,6 +145,12 @@ public class CardsGame {
                 }
 
                 break;
+            case FORFEIT:
+                System.out.print("Player has forfeited. ");
+                player.halveWager();
+                player.lose();
+                dealer.win();
+                break;
             case DEAL_DEALER:
                 int dealerVal = PackUtilities.getPackValue(dealer.getHand());
                 dealer.printHand();
@@ -182,6 +195,9 @@ public class CardsGame {
             stand(player);
         } else if (cmd.equals("d")) {
             dblDown(player);
+        } else if (cmd.equals("f")) {
+            player.forfeit();
+            stand(player);
         } else {
             hit(player);
         }
@@ -219,10 +235,10 @@ public class CardsGame {
 
         player.drawFromDeck(deck);
 
-        PackOfCards pack = new PackOfCards();
-        pack.insertIntoPack(new CardGUI(Suit.HEARTS, Rank.ACE));
-        //dealer.drawFromDeck(deck); // non concealed
-        dealer.drawFromDeck(pack);
+//        PackOfCards pack = new PackOfCards();
+//        pack.insertIntoPack(new CardGUI(Suit.HEARTS, Rank.ACE));
+        dealer.drawFromDeck(deck); // non concealed
+//        dealer.drawFromDeck(pack);
 
         dealer.printHand();
         player.printHand();

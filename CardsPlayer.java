@@ -2,6 +2,7 @@ public class CardsPlayer {
     private PackOfCards hand;
     private boolean theirTurn;
     private boolean tookInsurance;
+    private boolean forfeited;
     private GameOutcome gameOutcome;
     private int nbOfWins;
     private final String name;
@@ -17,6 +18,7 @@ public class CardsPlayer {
         this.credit = new Credit(money);
         this.wager = new Credit();
         this.tookInsurance = false;
+        this.forfeited = false;
     }
 
     public CardsPlayer(boolean theirTurn, String name) {
@@ -63,6 +65,7 @@ public class CardsPlayer {
 
     public void reset() {
         this.tookInsurance = false;
+        this.forfeited = false;
         wager.empty();
         gameOutcome = GameOutcome.UNFINISHED;
     }
@@ -73,10 +76,13 @@ public class CardsPlayer {
 
     public void doubleDown() { wager.deposit(wager.get()); }
 
+    public double halveWager() { return wager.withdraw(wager.get()/2); }
+
     public double getInsurance() {
         tookInsurance = true;
-        return wager.withdraw(wager.get()/2);
+        return halveWager();
     }
+    public void forfeit() { forfeited = true; }
 
     public void blackjackPay() { wager.deposit(wager.get()/2); }
 
@@ -95,6 +101,8 @@ public class CardsPlayer {
     public Credit getWager() { return wager; }
 
     public boolean insured() { return tookInsurance; }
+
+    public boolean hasForfeited() { return forfeited; }
 
     public void printHand() {
         System.out.print(name + "s hand: ");
