@@ -11,11 +11,12 @@ public class Credit implements Comparable<Credit> {
         this(0.0);
     }
 
-    public void withdraw(double howMuch) {
+    public double withdraw(double howMuch) {
         if (howMuch > balance)
             throw new IllegalArgumentException("Can't extract more than account has.");
 
         balance -= howMuch;
+        return howMuch;
     }
 
     public void deposit(double howMuch) {

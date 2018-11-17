@@ -1,11 +1,12 @@
 public class CardsPlayer {
     private PackOfCards hand;
     private boolean theirTurn;
+    private boolean tookInsurance;
     private GameOutcome gameOutcome;
     private int nbOfWins;
     private final String name;
     private Credit credit;
-    private Credit betted;
+    private Credit wager;
 
     public CardsPlayer(boolean theirTurn, String name, double money) {
         this.name = name;
@@ -14,7 +15,8 @@ public class CardsPlayer {
         this.gameOutcome = GameOutcome.UNFINISHED;
         this.nbOfWins = 0;
         this.credit = new Credit(money);
-        this.betted = new Credit();
+        this.wager = new Credit();
+        this.tookInsurance = false;
     }
 
     public CardsPlayer(boolean theirTurn, String name) {
@@ -43,15 +45,15 @@ public class CardsPlayer {
 
     public void win() {
         gameOutcome = GameOutcome.VICTORY;
-        System.out.println(name + " has won the round, and " + betted.get() + " credit.");
-        credit.deposit(betted.empty());
+        System.out.println(name + " has won the round, and " + wager.get() + " credit.");
+        credit.deposit(wager.empty());
         nbOfWins++;
     }
 
     public void lose() {
         gameOutcome = GameOutcome.DEFEAT;
-        System.out.println(name + " has lost the round, and " + betted.get() + " credit.");
-        credit.withdraw(betted.empty());
+        System.out.println(name + " has lost the round, and " + wager.get() + " credit.");
+        credit.withdraw(wager.empty());
     }
 
     public void draw() {
@@ -60,46 +62,39 @@ public class CardsPlayer {
     }
 
     public void reset() {
-        betted.empty();
+        this.tookInsurance = false;
+        wager.empty();
         gameOutcome = GameOutcome.UNFINISHED;
     }
 
-    public void bet(double amount) {
-        betted.deposit(amount);
+    public void bet(double amount) { wager.deposit(amount); }
+
+    public void bet(Credit credit) { wager.deposit(credit); }
+
+    public void doubleDown() { wager.deposit(wager.get()); }
+
+    public double getInsurance() {
+        tookInsurance = true;
+        return wager.withdraw(wager.get()/2);
     }
 
-    public void doubleDown() {
-        betted.deposit(betted.get());
-    }
+    public void blackjackPay() { wager.deposit(wager.get()/2); }
 
-    public void blackjackPay() {
-        betted.deposit(betted.get()/2);
-    }
+    public PackOfCards getHand() { return hand; }
 
-    public PackOfCards getHand() {
-        return hand;
-    }
+    public boolean isTheirTurn() { return theirTurn; }
 
-    public boolean isTheirTurn() {
-        return theirTurn;
-    }
+    public GameOutcome getGameOutcome() { return gameOutcome; }
 
-    public GameOutcome getGameOutcome() {
-        return gameOutcome;
-    }
+    public int getNbOfWins() { return nbOfWins; }
 
-    public int getNbOfWins() {
-        return nbOfWins;
-    }
+    public String getName() { return name; }
 
-    public String getName() {
-        return name;
-    }
+    public Credit getCredit() { return credit; }
 
-    public Credit getCredit() {
-        return credit;
-    }
+    public Credit getWager() { return wager; }
 
+    public boolean insured() { return tookInsurance; }
 
     public void printHand() {
         System.out.print(name + "s hand: ");

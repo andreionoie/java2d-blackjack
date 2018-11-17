@@ -1,7 +1,11 @@
 import java.util.Scanner;
 
 public class CardsGame {
-    public enum GameState {ERROR, INIT, PLACE_BETS, DEAL_CARDS, DEAL_PLAYER, DEAL_DEALER, REVEAL_CARDS, EVALUATE, REBUILD_DECK}
+    public enum GameState {
+        ERROR, INIT, PLACE_BETS, DEAL_CARDS,
+        ASK_INSURANCE, DEAL_PLAYER, DEAL_DEALER,
+        REVEAL_CARDS, EVALUATE, REBUILD_DECK
+    }
 
     private CardsPlayer dealer;
     private CardsPlayer player;
@@ -9,6 +13,7 @@ public class CardsGame {
     private int gameCount;
     private Scanner reader;
     private GameState gameState;
+    private boolean dealerHasAce, dealerHasBlackjack;
 
     public CardsGame(int nbOfDecks, Scanner reader) {
         this.reader = reader;
@@ -30,8 +35,17 @@ public class CardsGame {
                 gameState = GameState.DEAL_CARDS;
                 break;
             case DEAL_CARDS:
-                if (player.isTheirTurn())
+                if (dealerHasAce)
+                    gameState = GameState.ASK_INSURANCE;
+                else if (player.isTheirTurn())
                     gameState = GameState.DEAL_PLAYER;
+                break;
+            case ASK_INSURANCE:
+                if (dealerHasBlackjack) {
+                    gameState = GameState.EVALUATE;
+                } else {
+                    gameState = GameState.DEAL_PLAYER;
+                }
                 break;
             case DEAL_PLAYER:
                 if (player.getGameOutcome() != GameOutcome.UNFINISHED)  // player hit 21
@@ -80,6 +94,7 @@ public class CardsGame {
             case INIT:
                 player.reset();
                 dealer.reset();
+                dealerHasAce = dealerHasBlackjack = false;
                 System.out.println("\nPlaying game no. " + gameCount + "\n");
                 System.out.println("Player balance: " + player.getCredit());
                 break;
@@ -92,6 +107,13 @@ public class CardsGame {
                 dealCards();
                 player.setTheirTurn(true);
                 dealer.setTheirTurn(false);
+
+                break;
+            case ASK_INSURANCE:
+                System.out.print("Do you want insurance? (y/n) ");
+                if (reader.nextLine().trim().equals("y")) {
+                    player.getInsurance();
+                }
 
                 break;
             case DEAL_PLAYER:
@@ -168,6 +190,11 @@ public class CardsGame {
     private void evaluateGame() {
         GameOutcome outcome = PackUtilities.comparePacks(player.getHand(), dealer.getHand());
 
+        if (dealerHasBlackjack && player.insured()) {
+            // get money from insurance back
+            player.getWager().empty();
+        }
+        
         switch (outcome) {
             case VICTORY:   player.win();
                 dealer.lose();
@@ -180,16 +207,31 @@ public class CardsGame {
                 break;
         }
 
-        System.out.println("\n\n");
+        System.out.println();
 
     }
 
     private void dealCards() {
         player.drawFromDeck(deck);
+
         dealer.drawFromDeck(deck); // concealed
         dealer.getHand().getTop().conceal();
+
         player.drawFromDeck(deck);
-        dealer.drawFromDeck(deck); // non concealed
+
+        PackOfCards pack = new PackOfCards();
+        pack.insertIntoPack(new CardGUI(Suit.HEARTS, Rank.ACE));
+        //dealer.drawFromDeck(deck); // non concealed
+        dealer.drawFromDeck(pack);
+
+        dealer.printHand();
+        player.printHand();
+
+        if (dealer.getHand().getTop().getRank() == Rank.ACE) {
+            dealerHasAce = true;
+            if (PackUtilities.packContainsBlackjack(dealer.getHand()))
+                dealerHasBlackjack = true;
+        }
     }
 
     private void dblDown(CardsPlayer player) {
