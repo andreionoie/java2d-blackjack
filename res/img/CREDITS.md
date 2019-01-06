@@ -1,4 +1,4 @@
-# Credits for game art
+# Credits for GUIBlackjack art
 
 * [Dice & Trumps] - pixel art asset, deck of playing cards
 * [andrewtidey Cards Set] - another low-res deck

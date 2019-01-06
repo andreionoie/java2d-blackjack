@@ -1,9 +1,10 @@
 import java.awt.Graphics;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferStrategy;
 import java.util.Scanner;
 
 // credit: https://github.com/CodeNMore/New-Beginner-Java-Game-Programming-Src
-public class Game implements Runnable {
+public class GUIBlackjack implements Runnable {
 
     private Display display;
     public int width, height;
@@ -17,33 +18,36 @@ public class Game implements Runnable {
     private PackOfCards deck, playerHand, dealerHand;
     private Scanner reader;
     private int nbOfCards;
-    private CardsGame cardsGame;
+    private BlackjackLogic blackjackLogic;
 
-    public Game(String title, int width, int height){
+    private ActionListener hitListen;
+
+    public GUIBlackjack(String title, int width, int height){
         this.width = width;
         this.height = height;
         this.title = title;
     }
 
     private void init(){
-        display = new Display(title, width, height);
+        reader = new Scanner(System.in);
+        blackjackLogic = new BlackjackLogic(1, reader);
+        nbOfCards = 0;
+        display = new Display(title, width, height, blackjackLogic);
         Assets.load("/res/img/pixeldeck3_double.png");
 //        deck = new PackOfCards();
 //        deck.initStandardPack();
 //        deck.shuffle();
 //        deck.getTop().toggleSelect();
-        reader = new Scanner(System.in);
-        cardsGame = new CardsGame(1, reader);
-
-        nbOfCards = 0;
     }
 
     private void tick() {
-        cardsGame.tickGameLoop();
 
-        playerHand = cardsGame.getPlayerDeck();
-        dealerHand = cardsGame.getDealerDeck();
+        blackjackLogic.tickGameLoop();
 
+        playerHand = blackjackLogic.getPlayerDeck();
+        dealerHand = blackjackLogic.getDealerDeck();
+        display.getButtonPanel().updateCreditText(blackjackLogic.getPlayerCredit());
+        display.getBettingPanel().updateWagerText(blackjackLogic.getPlayerWager());
 //        switch (s) {
 //            case "":
 //                deck.shuffle();

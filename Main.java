@@ -1,15 +1,13 @@
-import java.util.Scanner;
-
 public class Main {
 
     public static void main(String[] args) throws Exception {
 //        Scanner reader = new Scanner(System.in);
-//        CardsGame game = new CardsGame(1, reader);
+//        BlackjackLogic GUIBlackjack = new BlackjackLogic(1, reader);
 //
-//        game.playGame();
+//        GUIBlackjack.playGame();
 
-        Game game = new Game("Blackjack", 500, 300);
-        game.start();
+        GUIBlackjack GUIBlackjack = new GUIBlackjack("Blackjack", 500, 300);
+        GUIBlackjack.start();
     }
 
 }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="BlackjackButtonPanel">
+  <grid id="27dc6" binding="panel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+    <constraints>
+      <xy x="20" y="20" width="482" height="40"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="8c72d" class="javax.swing.JButton" binding="standButton">
+        <constraints/>
+        <properties>
+          <text value="Stand"/>
+        </properties>
+      </component>
+      <component id="8d314" class="javax.swing.JButton" binding="hitButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <text value="Hit"/>
+        </properties>
+      </component>
+      <component id="e74a1" class="javax.swing.JButton" binding="doubleDownButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <text value="Double Down"/>
+        </properties>
+      </component>
+      <component id="c153" class="javax.swing.JButton" binding="surrenderButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <text value="Surrender"/>
+        </properties>
+      </component>
+      <component id="dc4fa" class="javax.swing.JLabel" binding="creditLabel">
+        <constraints/>
+        <properties>
+          <text value="Credit"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

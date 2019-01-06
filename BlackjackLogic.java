@@ -1,6 +1,8 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Scanner;
 
-public class CardsGame {
+public class BlackjackLogic {
     public enum GameState {
         ERROR, INIT, PLACE_BETS, DEAL_CARDS,
         ASK_INSURANCE, DEAL_PLAYER, FORFEIT, DEAL_DEALER,
@@ -12,18 +14,19 @@ public class CardsGame {
     private PackOfCards deck;
     private int gameCount;
     private Scanner reader;
+
     private GameState gameState;
     private boolean dealerHasAce, dealerHasBlackjack;
 
-    public CardsGame(int nbOfDecks, Scanner reader) {
+    public BlackjackLogic(int nbOfDecks, Scanner reader) {
         this.reader = reader;
         dealer = new CardsPlayer(false, "Dealer");
         player = new CardsPlayer(true, "Player1", 3000);
+        gameCount = 0;
+        gameState = GameState.INIT;
         deck = new PackOfCards();
         deck.initStandardPack();
         deck.shuffle();
-        gameCount = 0;
-        gameState = GameState.INIT;
     }
 
     private void nextState() {
@@ -32,7 +35,7 @@ public class CardsGame {
                 gameState = GameState.PLACE_BETS;
                 break;
             case PLACE_BETS:
-                gameState = GameState.DEAL_CARDS;
+                //gameState = GameState.DEAL_CARDS;
                 break;
             case DEAL_CARDS:
                 if (dealerHasAce)
@@ -70,10 +73,10 @@ public class CardsGame {
                 gameState = GameState.REVEAL_CARDS;
                 break;
             case REVEAL_CARDS:
-                String s = reader.nextLine();
-                // press n to enter new game..
-                if (s.equals("n"))
-                    gameState = GameState.REBUILD_DECK;
+//                String s = reader.nextLine();
+//                // press n to enter new game..
+//                if (s.equals("n"))
+//                    gameState = GameState.REBUILD_DECK;
 
                 break;
             case REBUILD_DECK:
@@ -90,7 +93,7 @@ public class CardsGame {
         int tickCount = 1;
 
         while (true) {
-            System.out.println("CardsGame.playGame: tick no. " + tickCount);
+            System.out.println("BlackjackLogic.playGame: tick no. " + tickCount);
             tickGameLoop();
             tickCount++;
         }
@@ -106,9 +109,16 @@ public class CardsGame {
                 System.out.println("Player balance: " + player.getCredit());
                 break;
             case PLACE_BETS:
-                System.out.print("Enter bet amount: ");
-                int amount = Integer.parseInt(reader.nextLine());
-                player.bet(amount);
+//                while (true)
+//                    try {
+//                        System.out.print("Enter bet amount: ");
+//                        int amount = Integer.parseInt(reader.nextLine());
+//                        player.bet(amount);
+//                        break;
+//                    } catch (Exception e) {
+//                        System.out.println("Enter a correct value!");
+//                    }
+
                 break;
             case DEAL_CARDS:
                 dealCards();
@@ -141,15 +151,13 @@ public class CardsGame {
                     bust(player);
 
                 } else {
-                    readMove(player);
+                    //readMove(player);
                 }
 
                 break;
             case FORFEIT:
                 System.out.print("Player has forfeited. ");
-                player.halveWager();
-                player.lose();
-                dealer.win();
+                forfeit(player);
                 break;
             case DEAL_DEALER:
                 int dealerVal = PackUtilities.getPackValue(dealer.getHand());
@@ -180,8 +188,7 @@ public class CardsGame {
 
             case ERROR:
             default:
-                System.out.println("GameState=ERROR");
-                System.exit(-1);
+                throw new IllegalStateException("GameState=ERROR");
         }
 
         nextState();
@@ -191,15 +198,20 @@ public class CardsGame {
     private void readMove(CardsPlayer player) {
         String cmd = reader.nextLine();
 
-        if (cmd.equals("n")) {
-            stand(player);
-        } else if (cmd.equals("d")) {
-            dblDown(player);
-        } else if (cmd.equals("f")) {
-            player.forfeit();
-            stand(player);
-        } else {
-            hit(player);
+        switch (cmd) {
+            case "n":
+                stand(player);
+                break;
+            case "d":
+                dblDown(player);
+                break;
+            case "f":
+                player.forfeit();
+                stand(player);
+                break;
+            default:
+                hit(player);
+                break;
         }
     }
 
@@ -212,15 +224,19 @@ public class CardsGame {
         }
         
         switch (outcome) {
-            case VICTORY:   player.win();
+            case VICTORY:
+                player.win();
                 dealer.lose();
                 break;
-            case DEFEAT:    player.lose();
+            case DEFEAT:
+                player.lose();
                 dealer.win();
                 break;
-            case DRAW:      player.draw();
+            case DRAW:
+                player.draw();
                 dealer.draw();
                 break;
+            default: throw new IllegalStateException();
         }
 
         System.out.println();
@@ -268,12 +284,42 @@ public class CardsGame {
             dealer.setTheirTurn(true);
     }
 
+    private void forfeit(CardsPlayer player) {
+        player.halveWager();
+        player.lose();
+        dealer.win();
+    }
+
+    public void hit() {
+        hit(player);
+    }
+
+    public void dblDown() {
+        dblDown(player);
+    }
+
+    public void stand() {
+        stand(player);
+    }
+
+    public void forfeit() {
+        forfeit(player);
+    }
+
     private void bust(CardsPlayer player) {
         player.setTheirTurn(false);
         System.out.println(player.getName() + " has went over 21!");
         player.lose();
     }
 
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
 
     public PackOfCards getPlayerDeck() {
         return player.getHand();
@@ -282,4 +328,15 @@ public class CardsGame {
     public PackOfCards getDealerDeck() {
         return dealer.getHand();
     }
+
+    public String getPlayerCredit() {
+        return "" + (long) (player.getCredit().get() - player.getWager().get());
+    }
+    public String getPlayerWager() { return "" + (long) (player.getWager().get());}
+
+    public void playerBet(int amount) {
+        player.bet(amount);
+    }
+
+
 }

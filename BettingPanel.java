@@ -1,0 +1,98 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BettingPanel extends JPanel {
+    private JLabel wagerAmount;
+    private List<JButton> chipButtons;
+    private static final String[] CHIPS = {"1", "5", "10", "20", "25", "50", "100", "500", "1000"};
+
+    private JButton allIn, clearWager, finishBet;
+    private int temporaryBet;
+
+    public BettingPanel(BlackjackLogic blackjackLogic) {
+        super();
+        this.setLayout(new GridLayout(16, 1));
+        chipButtons = new ArrayList<JButton>();
+        temporaryBet = 0;
+
+        createComponents();
+        createButtonListeners(blackjackLogic);
+
+    }
+
+    private void createComponents() {
+        wagerAmount = new JLabel();
+        allIn = new JButton("All In");
+        clearWager = new JButton("Clear");
+        finishBet = new JButton("Bet");
+
+        for (String chip : CHIPS) {
+            chipButtons.add(new JButton("$" + chip));
+        }
+
+
+
+        for (JButton but : chipButtons)
+            add(but);
+
+        add(new JLabel(" ")); // separator
+        add(allIn);
+        add(clearWager);
+
+        add(new JLabel(""));
+        add(new JLabel("Bet total: "));
+        add(wagerAmount);
+        add(finishBet);
+    }
+
+    public void updateWagerText(String text) {
+        wagerAmount.setText("$" + temporaryBet);
+        wagerAmount.setHorizontalAlignment(JLabel.CENTER);
+    }
+
+
+    private void createButtonListeners(BlackjackLogic blackjackLogic) {
+        for (JButton but : chipButtons) {
+            but.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (blackjackLogic.getGameState() == BlackjackLogic.GameState.PLACE_BETS) {
+                        temporaryBet += Integer.parseInt(but.getText().substring(1));
+                    }
+                }
+            });
+        }
+
+        allIn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (blackjackLogic.getGameState() == BlackjackLogic.GameState.PLACE_BETS) {
+                    temporaryBet = Integer.parseInt(blackjackLogic.getPlayerCredit());
+                }
+            }
+        });
+
+        clearWager.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (blackjackLogic.getGameState() == BlackjackLogic.GameState.PLACE_BETS) {
+                    temporaryBet = 0;
+                }
+            }
+        });
+
+        finishBet.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (blackjackLogic.getGameState() == BlackjackLogic.GameState.PLACE_BETS) {
+                    blackjackLogic.playerBet(temporaryBet);
+                    blackjackLogic.setGameState(BlackjackLogic.GameState.DEAL_CARDS);
+                }
+            }
+        });
+    }
+}
