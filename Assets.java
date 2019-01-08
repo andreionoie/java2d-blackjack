@@ -6,7 +6,11 @@ import java.util.Map;
 // credit: https://github.com/CodeNMore/New-Beginner-Java-Game-Programming-Src
 
 public class Assets {
+    // pixel deck
     private static final int width = 64, height = 96;
+    // andrew tidey deck
+    //private static final int width = 103, height = 138;
+
     private static Map<Card, BufferedImage> cardImgs;
     public static BufferedImage cardBackside, cardSelected;
 
@@ -16,24 +20,8 @@ public class Assets {
 
         cardImgs = new HashMap<Card, BufferedImage>();
 
-        Suit[] ssSuits = {Suit.SPADES, Suit.CLUBS, Suit.DIAMONDS, Suit.HEARTS};
-        int xVal=0, yVal=0;
-
-        for (Suit s : ssSuits) {
-            yVal = 0;
-
-            for (Rank r : Rank.values()) {
-                Card c = new Card(s, r);
-                BufferedImage img = ss.getTileAt(xVal, yVal);
-                cardImgs.put(c, img);
-                yVal++;
-            }
-
-            xVal++;
-        }
-
-        cardBackside = ss.getTileAt(0, 13);
-        cardSelected = ss.getTileAt(3, 14);
+        loadPixelDeck(ss);
+        //loadAndrewDeck(ss);
     }
 
     public static BufferedImage getCardImg(CardGUI cardGUI) {
@@ -70,6 +58,45 @@ public class Assets {
                 tmpY++;
             }
         }
+    }
+
+    private static void loadPixelDeck(Spritesheet ss) {
+        Suit[] ssSuits = {Suit.SPADES, Suit.CLUBS, Suit.DIAMONDS, Suit.HEARTS};
+        int xVal=0, yVal=0;
+
+        for (Suit s : ssSuits) {
+            yVal = 0;
+
+            for (Rank r : Rank.values()) {
+                Card c = new Card(s, r);
+                BufferedImage img = ss.getTileAt(xVal, yVal);
+                cardImgs.put(c, img);
+                yVal++;
+            }
+
+            xVal++;
+        }
+
+        cardBackside = ss.getTileAt(0, 13);
+        cardSelected = ss.getTileAt(3, 14);
+    }
+
+    private static void loadAndrewDeck(Spritesheet ss) {
+        Suit[] ssSuits = {Suit.SPADES,  Suit.DIAMONDS, Suit.HEARTS, Suit.CLUBS};
+        int xVal=0;
+
+        for (Suit s : ssSuits) {
+            for (Rank r : Rank.values()) {
+                Card c = new Card(s, r);
+                BufferedImage img = ss.getTileAt(xVal, 0);
+                cardImgs.put(c, img);
+            }
+
+            xVal++;
+        }
+
+        cardBackside = ss.getTileAt(54, 0);
+        cardSelected = ss.getTileAt(55, 0);
     }
 
 }

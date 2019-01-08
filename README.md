@@ -1,4 +1,7 @@
 # java2d-blackjack
 
-Current progression of GUIBlackjack:
-![](screenshots/demo3.png?raw=true)
+Gameplay screenshot:
+![](screenshots/demo4.png?raw=true)
+
+Class diagrams:
+![](screenshots/diagram.png?raw=true)

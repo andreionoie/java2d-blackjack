@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferStrategy;
@@ -41,6 +42,9 @@ public class GUIBlackjack implements Runnable {
     }
 
     private void tick() {
+        if (blackjackLogic.getGameState() == BlackjackLogic.GameState.ASK_INSURANCE) {
+            blackjackLogic.insuranceDialog(display.getFrame());
+        }
 
         blackjackLogic.tickGameLoop();
 
@@ -48,6 +52,13 @@ public class GUIBlackjack implements Runnable {
         dealerHand = blackjackLogic.getDealerDeck();
         display.getButtonPanel().updateCreditText(blackjackLogic.getPlayerCredit());
         display.getBettingPanel().updateWagerText(blackjackLogic.getPlayerWager());
+
+        if (blackjackLogic.getGameState() == BlackjackLogic.GameState.PLACE_BETS) {
+            display.getBettingPanel().enableAllButtons();
+            display.getBettingPanel().updateChipButtonsActive();
+        }
+
+
 //        switch (s) {
 //            case "":
 //                deck.shuffle();

@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Scanner;
@@ -127,10 +128,10 @@ public class BlackjackLogic {
 
                 break;
             case ASK_INSURANCE:
-                System.out.print("Do you want insurance? (y/n) ");
-                if (reader.nextLine().trim().equals("y")) {
-                    player.getInsurance();
-                }
+//                System.out.print("Do you want insurance? (y/n) ");
+//                if (reader.nextLine().trim().equals("y")) {
+//                    player.getInsurance();
+//                }
 
                 break;
             case DEAL_PLAYER:
@@ -338,5 +339,18 @@ public class BlackjackLogic {
         player.bet(amount);
     }
 
+    public void insuranceDialog(JFrame frame) {
+        int n = JOptionPane.showConfirmDialog(
+                frame,
+                "The dealer has an ace, or a possibility for\n"
+                        + "a blackjack hand. Press Yes to buy insurance\n"
+                        + "equal to half of your original bet, or No otherwise.",
+                "Buy insurance",
+                JOptionPane.YES_NO_OPTION);
+
+        if (n == JOptionPane.YES_OPTION) {
+            player.getInsurance();
+        }
+    }
 
 }

@@ -9,18 +9,19 @@ public class BettingPanel extends JPanel {
     private JLabel wagerAmount;
     private List<JButton> chipButtons;
     private static final String[] CHIPS = {"1", "5", "10", "20", "25", "50", "100", "500", "1000"};
-
+    private BlackjackLogic blackjackLogic;
     private JButton allIn, clearWager, finishBet;
     private int temporaryBet;
 
     public BettingPanel(BlackjackLogic blackjackLogic) {
         super();
         this.setLayout(new GridLayout(16, 1));
+        this.blackjackLogic = blackjackLogic;
         chipButtons = new ArrayList<JButton>();
         temporaryBet = 0;
 
         createComponents();
-        createButtonListeners(blackjackLogic);
+        createButtonListeners();
 
     }
 
@@ -55,7 +56,7 @@ public class BettingPanel extends JPanel {
     }
 
 
-    private void createButtonListeners(BlackjackLogic blackjackLogic) {
+    private void createButtonListeners() {
         for (JButton but : chipButtons) {
             but.addActionListener(new ActionListener() {
                 @Override
@@ -91,8 +92,34 @@ public class BettingPanel extends JPanel {
                 if (blackjackLogic.getGameState() == BlackjackLogic.GameState.PLACE_BETS) {
                     blackjackLogic.playerBet(temporaryBet);
                     blackjackLogic.setGameState(BlackjackLogic.GameState.DEAL_CARDS);
+                    disableAllButtons();
                 }
             }
         });
+    }
+
+    public void disableAllButtons() {
+        for (JButton but : chipButtons)
+            but.setEnabled(false);
+        allIn.setEnabled(false);
+        clearWager.setEnabled(false);
+        finishBet.setEnabled(false);
+    }
+
+    public void enableAllButtons() {
+        for (JButton but : chipButtons)
+            but.setEnabled(true);
+        allIn.setEnabled(true);
+        clearWager.setEnabled(true);
+        finishBet.setEnabled(true);
+    }
+
+    public void updateChipButtonsActive() {
+         for (JButton but : chipButtons) {
+             if ((Integer.parseInt(blackjackLogic.getPlayerCredit()) - temporaryBet) >= Integer.parseInt(but.getText().substring(1)))
+                 but.setEnabled(true);
+             else
+                 but.setEnabled(false);
+         }
     }
 }

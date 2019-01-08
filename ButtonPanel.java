@@ -13,7 +13,7 @@ public class ButtonPanel extends JPanel {
 
     public ButtonPanel(BlackjackLogic blackjackLogic) {
         super();
-        this.setLayout(new FlowLayout());
+        this.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         createComponents();
         createButtonListeners(blackjackLogic);
@@ -25,7 +25,7 @@ public class ButtonPanel extends JPanel {
         hit = new JButton("Hit");
         stand = new JButton("Stand");
         surrender = new JButton("Surrender");
-        newGame = new JButton("New GUIBlackjack");
+        newGame = new JButton("New Game");
 
         add(credit);
         add(doubleDown);

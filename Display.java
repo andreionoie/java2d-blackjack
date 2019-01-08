@@ -56,4 +56,8 @@ public class Display {
     public BettingPanel getBettingPanel() {
         return bettingPanel;
     }
+
+    public JFrame getFrame() {
+        return frame;
+    }
 }
